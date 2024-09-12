@@ -18,11 +18,36 @@
         td {{ $ctrl.server.groupId }}
       tr
         td status
-        td {{ $ctrl.server.status === "started" ? "Запущен" : "Остановлен" }}
+        //- case $ctrl.server.status
+        //-   when "started"
+        //-     td {{ $ctrl.server.status }}
+        //-     a.btn.btn-default.pull-right(
+        //-       ng-click="$ctrl.stop()"
+        //-     ) Остановить
+        //-     a.btn.btn-default.pull-right(
+        //-       ng-click="$ctrl.restart()"
+        //-     ) Перезагрузить
+        //-   when "stoped"
+        //-     td {{ $ctrl.server.status }}
+        //-     a.btn.btn-default.pull-right(
+        //-       ng-click="$ctrl.start()"
+        //-     ) Запустить
+        //-   when "restarting"
+        //-     td {{ $ctrl.server.status }}
+        //-     p рестартинг
+        //-   default 
+        //-     td Сервер не найден
+
+
+        td {{ $ctrl.server.status === "started" ? "Запущен" : "Остановлен" }} {{$ctrl.server.status === "restarting" ? "(Перезагружается)" : "" }}
           a.btn.btn-default.pull-right(
             ng-if="$ctrl.server.status === 'started'",
             ng-click="$ctrl.stop()"
           ) Остановить
+          a.btn.btn-default.pull-right(
+            ng-if="$ctrl.server.status === 'started'",
+            ng-click="$ctrl.restart()"
+          ) Перезагрузить
           a.btn.btn-default.pull-right(
             ng-if="$ctrl.server.status === 'stoped'",
             ng-click="$ctrl.start()"

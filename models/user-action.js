@@ -4,6 +4,7 @@ const userActionSchema = new mongoose.Schema({
   serverId: String,
   user: String,
   action: String,
+  //можно добавить statusCode сервера
 });
 
 userActionSchema.index({

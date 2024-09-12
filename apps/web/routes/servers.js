@@ -2,6 +2,7 @@ const express = require('express');
 const moment = require('moment');
 
 const {Server, UserAction} = require('../../../models');
+const {serverStatusCheck} = require('../utils/serverStatusCheck')
 
 const serversRouter = express.Router();
 
@@ -102,6 +103,42 @@ serversRouter.get('/:id/stop', async (req, res) => {
       user: 'Тестовый пользователь',
       action: 'Пользователь остановил сервер',
     });
+    res.json(server);
+  } catch (err) {
+    console.log(err);
+    res.json({});
+  }
+});
+
+serversRouter.get('/:id/restart', async (req, res) => {
+  try {
+    console.log('get restart servers id ', req.params.id);
+    const server = await Server.findOne({
+      _id: req.params.id,
+    });
+    server.status = 'restarting';
+    await server.save();
+    /*
+      Какая-то логика запуска сервера
+    */
+    await UserAction.create({
+      serverId: req.params.id,
+      date: moment().format('YYYY-MM-DD HH:mm:ss'),
+      user: 'Тестовый пользователь',
+      action: 'Пользователь перезагрузил сервер',
+    });
+    /* 
+      Проверяем запуск сервера
+    */
+    await serverStatusCheck(req.params.id)
+
+    await UserAction.create({
+      serverId: req.params.id,
+      date: moment().format('YYYY-MM-DD HH:mm:ss'),
+      user: 'Тестовый пользователь',
+      action: 'Пользователь успешно перезагрузил сервер',
+    });
+
     res.json(server);
   } catch (err) {
     console.log(err);
